@@ -1,6 +1,7 @@
 apply plugin: "org.sonarqube"
 apply plugin: 'jacoco'
 
+// set your sonar url server
 def sonarUrl = "http://sonarqube.url.com"
 
 sonarqube {
@@ -11,7 +12,9 @@ sonarqube {
 
 def jacocoVersion = "0.7.4.201502262128"
 
-// modify this maps for your project
+// ********************************************************************************************************
+// ****************************** modify this maps for your project ***************************************
+// ********************************************************************************************************
 
 def projectFlavorMap = ['app' : 'debug',
                         'module1' : 'debug',
@@ -38,6 +41,8 @@ def projectJacocoReportTaskDependsOn = [    'app' : 'testDebugUnitTest',
                                             'module1' : 'testDebugUnitTest',
                                             'module2' : 'testDebugUnitTest',
                                             'module3' : 'test']
+// ********************************************************************************************************
+
 subprojects { prj ->
 
     if (projectFlavorMap.containsKey(prj.name)) {
@@ -87,13 +92,13 @@ subprojects { prj ->
                     property "sonar.tests", "src/test"
                 }
                 property "sonar.java.coveragePlugin", "jacoco"
-                property "sonar.jacoco.reportPath", "${projectJacocoReportPath.get(prj.name)}"
-                property "sonar.junit.reportsPath", "${projectJunitReportPath.get(prj.name)}"
-                property "sonar.java.binaries", "${projectJavaBinaries.get(prj.name)}"
+                property "sonar.jacoco.reportPath", projectJacocoReportPath.get(prj.name)
+                property "sonar.junit.reportsPath", projectJunitReportPath.get(prj.name)
+                property "sonar.java.binaries", projectJavaBinaries.get(prj.name)
             }
         }
 
-        jacocoReport.dependsOn "${projectJacocoReportTaskDependsOn.get(prj.name)}"
+        jacocoReport.dependsOn projectJacocoReportTaskDependsOn.get(prj.name)
     }
 }
 
